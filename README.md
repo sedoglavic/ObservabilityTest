@@ -13,20 +13,20 @@ This package works with maple computer system (with Maple 2017 and previous vers
 Clone the repository.
 
 This creates: 
-* a directory `ObservabilityTest' (source code) and in it:
+* a directory `ObservabilityTest` (source code) and in it:
 * a directory `examples` 
-* a directory `release` with three files: `maple.lib', `maple.ind', `maple.hdb'.
+* a directory `release` with three files: `maple.lib`, `maple.ind`, `maple.hdb`.
 
 ### Deployment
-To make the observabilityTest procedure available to your Maple system, the absolute path to the newly created `ObservabilityTest/release' directory has to be put in the Maple global variable `libname'.
-This is either done once forever in your `.mapleinit' file or has to be done at the beginning of each Maple session by the command
+To make the observabilityTest procedure available to your Maple system, the absolute path to the newly created `ObservabilityTest/release` directory has to be put in the Maple global variable `libname`.
+This is either done once forever in your `.mapleinit` file or has to be done at the beginning of each Maple session by the command
 ```
  libname:="<ObservabilityTest release path>",libname:
 ```
-where `<ObservabilityTest release path>' depends on your system type.
+where `<ObservabilityTest release path>` depends on your system type.
 
 #### Under Unix (like):
-The `ObservabilityTest/release' path is something like 
+The `ObservabilityTest/release` path is something like 
 ```
       /foo/bar/.../ObservabilityTest/release
 ```
@@ -35,7 +35,7 @@ The `ObservabilityTest/release' path is something like
 libname:="/foo/bar/.../ObservabilityTest/release",libname:
 ```
 #### Under Windows:
-The `ObservabilityTest/release' path is something like 
+The `ObservabilityTest/release` path is something like 
 ```
 C:\ObservabilityTest\release
 ``` 
