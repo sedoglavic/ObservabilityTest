@@ -73,4 +73,4 @@ Any support request, comments, bug reports, critics are welcome!
 Please send to: email: Alexandre.Sedoglav@univ-lille.fr
 
 ## Licence
-copyleft
+GNU GPL v2
