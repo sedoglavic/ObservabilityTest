@@ -1,0 +1,141 @@
+ObservabilityTest - 
+
+Calling Sequence:
+   observabilityTest(F,X,G,Theta,U)
+
+Parameters:
+  F 	 - a list of algebraic expressions representing a vector field
+  X      - a list of names such that diff(X[i],t) = F[i]
+  G      - a list of algebraic expressions representing outputs
+  Theta  - a list of the names of the parameters
+  U      - a list of the names of the inputs	
+
+Description:
+
+- This procedure returns a list composed of:
+	- the dimension of the non observable variables and parameters;
+	- the list of non observable variables and parameters;
+	- the list of observable variables and parameters;
+	- an integer representing the least number of row in the Jacobian 
+	  matrix necessary to determines its kernel.
+
+- The model is of the following kind:
+
+		diff(Theta,t) = 0            ,
+		diff(  X  ,t) = F(X,Theta,U) ,
+		       Y      = G(X,Theta,U) .
+
+	F and G are rational expressions.
+
+- The numerical constants must be approximated by rationals (9.81=981/100).
+
+- The model can be composed of relations of order zero that must be considered
+  as supplementary outputs.
+
+- If the model contains Liouvillian expressions (such as exp(x)) then one can 
+  replace each of these functions by a new variable and add the associated 
+  differential equation to the original system (z=exp(x), diff(z,t)=z*diff(x,t)). 
+
+- The current implementation supports Maple V release 5.
+  Previous version of Maple are not supported.
+
+- WARNING: This package comes with ! NO WARRANTY !
+
+This code is a pilot implementation. Hence, it contains many known defects. 
+For example:
+
+	- the variable t must be unassigned;
+	- the list X of the names of state variables have to be ordered such 
+	  that diff(X[i],t) = F[i] represents the vector field associated to 
+	  the model;
+	- a division by zero can occur if the chosen initial conditions cancel
+	  the separant;
+	- some Liouvillian functions can not be handled. For example, the use
+	  of a square root implies that we work on an algebraic extension of a 
+	  finite field. Some variables and some equations have to be added in
+	  order to handle this case;
+	- the implementation is efficient for one output. If there are
+	  many outputs AND if the computation time is too long then 
+	  the final test can be done in the main loop and some useless
+	  computations avoided.
+
+Complexity:
+
+- The arithmetic complexity of the algorithm is polynomial in the number of
+  variables, parameters and outputs (see [1]).
+
+- The computations are performed on a finite field in order to control the bit
+  complexity.
+
+References:
+
+
+ [1] Sedoglavic A, << A probabilistic algorithm to test local algebraic 
+  observability in polynomial time >>, Journal of Symbolic Computation
+  33, 5 (May 2002), 735--755.
+
+  Available at http://www.lifl.fr/~sedoglav.
+
+Any comments, bug reports, critics are welcome !
+Please send to: Alexandre.Sedoglavic@lifl.fr
+
+Examples:
+> # see INSTALL in order to make observabilityTest available.
+> infolevel[observabilityTest] := 1 :  # for printing details
+
+> F :=  x*(a-b*x)-c*x ;
+                                                      F := x (a - b x) - c x
+
+> Y := x ;
+                                                              Y := x
+
+> #Considered system is x'=x (a - b x) - c x, a'=b'=c'=0 and d*x is measured
+
+> observabilityTest([F],[x],[Y],[a,b,c],[]) ;
+observabilityTest:   Modular computation with version 0.0
+
+observabilityTest:   Some informations about the system
+observabilityTest:   Nb Inputs       U  :   0
+observabilityTest:   Nb Outputs      Y  :   1
+observabilityTest:   Nb Variables    X  :   1
+observabilityTest:   Nb Parameters Theta:   3   
+
+observabilityTest:   The computation are done modulo the following prime number   10000000000037   
+
+observabilityTest:   System treatment
+observabilityTest:   End of system treatment   .39e-1   
+
+observabilityTest:   Power series expansion at order   4
+observabilityTest:   ->  Order   2
+observabilityTest:   ->  Computation time   .30e-1
+observabilityTest:   ->  Order   4
+observabilityTest:   ->  Computation time   .49e-1
+observabilityTest:   End of integration 
+
+observabilityTest:   Evaluation of output system
+observabilityTest:   End of evaluation of output system 
+
+ObservabilityAnalysis:   The transcendence degree of k(U,Y) --> k(U,Y,X,Theta) is   1   
+
+ObservabilityAnalysis:   [a, c]   are not observable.
+
+ObservabilityAnalysis:   least number of equations needed to determine the group of symetries   2   
+
+observabilityTest:   Total used time   .109   
+
+                                    [1, [a, c], [b, x], 2
+>
+
+Comments:
+
+	This result shows that a and c are not identifiable knowing x. 
+	The parameters b is identifiable.
+	In fact, the one-parameter group of translation
+		a -> a + lambda 
+		c -> c + lambda
+	are composed of symmetries of the considered model letting its
+	inputs and outputs invariant.
+
+See Also:  
+
+observabilitySymmetries

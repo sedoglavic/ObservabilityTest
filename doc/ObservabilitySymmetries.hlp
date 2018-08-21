@@ -1,0 +1,170 @@
+ObservabilitySymmetries - 
+
+Calling Sequence:
+   observabilitySymmetries(F,X,G,Theta,U,O)
+
+Parameters:
+  F 	 - a list of algebraic expressions representing a vector field
+  X      - a list of names such that diff(X[i],t) = F[i]
+  G      - a list of algebraic expressions representing outputs
+  Theta  - a list of the names of the parameters
+  U      - a list of the names of the inputs	
+  O      - the output of the procedure observabilityTest
+
+Description:
+
+- This procedure requires the output of the procedure observabilityTest.
+
+- The model is of the following kind:
+
+		diff(Theta,t) = 0            ,
+		diff(  X  ,t) = F(X,Theta,U) ,
+		       Y      = G(X,Theta,U) .
+
+	F and G are rational expressions.
+
+- This procedure returns a table 'res' with 4 indices:
+  `coordinates`,`translation`, `scaling` and `other`.
+  The entrie associated to the indice coordinates define the 
+  coordinates set in whish infinitesimal generators are defined
+  (see below).
+  Other associated entries are sets of infinitesimal generators
+  of symmetries groups acting on considered systems and leaving
+  inputs and outputs invariants.
+
+- An infinitesimal generators is represented by the list
+	[	seq(c[i],i=O[2])	]
+  of coefficients in coordinates O[2] (unobservable variables and
+  parameters) and defined as
+	add(c[i]*diff( ,i),i=O[2])   
+  where diff( ,i) represents a partial derivative. 
+
+- The associated one parameters groups of symmetries is given as the
+  solution of the differential problem:
+	diff(i(lambda),lambda) = c[i], for i in O[2].
+
+  For example, if c[i] are all constant, the group is composed by the
+  translation
+	i -> i + c[i]*lambda,
+  if c[i] are cste_i*i the group is composed by the scaling
+	i -> i*lambda^c[i].
+  (See example below).
+
+- Other type of symmetries are not determine yet by our implementation
+  because this could not be done---up to our knowledge---with a good
+  complexity (i.e. polynomial in input's size).
+  Thus, it may happen that all symmetries could not be computed 
+  (specially if your system is linear w.r.t. variables and inputs).
+
+- The numerical constants must be approximated by rationals (9.81=981/100).
+
+- The model can be composed of relations of order zero which must be considered
+  as supplementary outputs.
+
+- If the model contains Liouvillian expressions (such as exp(x)) then one can 
+  replace each of these functions by a new variable and add the
+  associated differential equation to the original system (z=exp(x),
+  diff(z,t)=z*diff(x,t)).
+
+- The current implementation supports Maple V release 5.
+  Previous version of Maple are not supported.
+
+- WARNING: This package comes with ! NO WARRANTY !
+
+This code is a pilot implementation. Hence, it contains many known defects. 
+For example:
+
+	- the variable t must be unassigned;
+	- the list X of the names of state variables have to be ordered such 
+	  that diff(X[i],t) = F[i] represents the vector field associated to 
+	  the model;
+	- a division by zero can occur if the chosen initial conditions cancel
+	  some separant;
+	- some Liouvillian functions can not be handled. For example, the use
+	  of a square root implies that we work on an algebraic extension of a 
+	  finite field. Some variables and some equations have to be added in
+	  order to handle this case.
+
+Complexity:
+
+- The arithmetic complexity of the algorithm is polynomial in the number of
+  variables, parameters and outputs (see [2]).
+
+- The computations are performed on a finite field in order to control the bit
+  complexity.
+
+References:
+
+	[1] Sedoglavic A, << A probabilistic algorithm to test local
+	algebraic observability in polynomial time >>, Journal of
+	Symbolic Computation 33, 5 (May 2002), 735--755.
+
+	[2] Hubert, É. et Sedoglavic, A. Polynomial Time
+	Nondimensionalisation of Ordinary Differential Equations via
+	their Lie Point Symmetries. Rapport interne. February 2006.
+
+	  Available at http://www.lifl.fr/~sedoglav.
+
+	Even if there is no consideration about
+	observability/identifiability in [2], its results could be
+	transposed in this framework using [1].
+
+Any comments, bug reports, critics are welcome !
+Please send to: Alexandre.Sedoglavic@lifl.fr
+
+Example:
+
+> # see INSTALL in order to make observabilitySymmetries available.
+> infolevel[observabilitySymmetries] := 1 :  # for printing details
+
+
+> F := x*(a-b*x)-c*x ;
+                                 F := x (a - b x) - c x
+> Y := d*x ;                                            
+                                   Y := d x
+
+> #Considered system is x'=x (a - b x) - c x, a'=b'=c'=0 and d*x is measured
+
+>  ans := observabilityTest([F],[x],[Y],[a,b,c,d],[]) :
+                          ans := [2, [a, b, c, d, x], [], 3]
+
+>  observabilitySymmetries([F],[x],[Y],[a,b,c,d],[],ans) ;
+observabilitySymmetries:   "Version 0.0 \n"
+observabilitySymmetries:   "Searching translation\n"
+observabilitySymmetries:   "I found a one parameters (_lambda)  group of symmetries defined by"
+observabilitySymmetries:   a    ---->    1    *     _lambda     +    a
+observabilitySymmetries:   c    ---->    1    *     _lambda     +    c
+observabilitySymmetries:   "others variables and parameters are unchanged\n"
+observabilitySymmetries:   "Searching dilatation\n"
+observabilitySymmetries:   "I found a one parameters (_lambda)  group of symmetries defined by"
+observabilitySymmetries:   b    ---->    b    *     _lambda^   -1
+observabilitySymmetries:   d    ---->    d    *     _lambda^   -1
+observabilitySymmetries:   x    ---->    x    *     _lambda^   1
+observabilitySymmetries:   "others variables and parameters are unchanged\n"
+                                               {[1, 0, 1, 0, 0], [0, -b, 0, -d, x]}
+>
+
+Comments:
+
+	this show that the one-parameter group of translation
+		a -> a + lambda 
+		c -> c + lambda
+	and the one that the one-parameter group of scaling
+	        x -> lambda*x
+		b -> b/lambda
+		d -> d/lambda
+	are composed of symmetries of the considered model letting its
+	inputs and outputs invariant.
+
+	The first transformation proves that a and c are not
+	identifiable.
+
+	As the second transformation groups acts on state variables,
+	initial conditions should be considered. The model is
+	unidentifiable if x(0) is 0 or unknown.
+
+	Invariants of these groups are identifiable.
+ 
+See Also:  
+
+observabilityTest

@@ -1,0 +1,35 @@
+dagnormal - a numerator and a denominator of an expression
+
+Calling Sequence:
+    dagnormal(expr);
+
+Parameters:
+    expr  - an algebraic expression or a list of algebraic expression.
+	
+Description:
+- The function dagnormal computes a numerator and a denominator of expr.
+- It computes the following list of polynomials:
+	
+	[numer(expr),denom(expr)].
+
+Complexity:
+- If the arithmetic complexity of expr is L then the arithmetic complexity of
+dagnormal(expr) is at most 4L. 
+
+Any comments, bug report and appreciations are welcome !
+Please send to: email: Alexandre.Sedoglavic@polytechnique.fr
+
+References:
+
+Examples:
+> expr := x+1/(x+1/x) ;
+                                       1
+                        expr := x + -------
+                                    x + 1/x
+
+> dagnormal(expr) ;
+                             2            2
+                       [x (x  + 1) + x, x  + 1]
+
+See Also:  
+numer, denom.

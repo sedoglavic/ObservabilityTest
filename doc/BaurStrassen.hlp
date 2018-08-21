@@ -1,0 +1,41 @@
+BaurStrassen - gradient of an expression
+
+Calling Sequence:
+    BaurStrassen(expr,l);
+
+Parameters:
+    expr  - an algebraic expression or a list of algebraic expression.
+    l     - a list of variables.
+	
+Description:
+- The function BaurStrassen computes the gradient of expr w.r.t. l.
+- It computes the following list of partial derivatives:
+	
+	[seq(diff(expr,l[i]),i=1..nops(l))].
+
+Complexity:
+- If the arithmetic complexity of expr is L then the arithmetic complexity of
+BaurStrassen(expr,l) is at most 5L. 
+
+References:
+- J. Morgenstern, "How to compute fast a function and all its derivatives: 
+a variation on the theorem of Baur-Strassen", may 1984.
+
+Any comments, bug reports, appreciations are welcome !
+Please send to: email: Alexandre.Sedoglavic@polytechnique.fr
+
+Examples:
+> expr := x^2*(y+z)/q;
+                                           2
+                                         x  (y + z)
+                                    a := ----------
+                                             q
+
+> BaurStrassen(expr,[x,y,z,q]) ;
+                                      2     2      2
+                        (y + z) x   x     x      x  (y + z)
+                     [2 ---------, ----, ----, - ----------]
+                            q       q     q           2
+						     q	
+See Also:  
+diff, grad.
